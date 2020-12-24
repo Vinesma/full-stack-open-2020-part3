@@ -27,6 +27,7 @@ logger_post = morgan((tokens, request, response) => {
 
 // use middleware
 app.use(express.json());
+app.use(express.static('build'));
 app.use(cors());
 app.use(logger);
 app.use(logger_post);
@@ -53,10 +54,6 @@ let persons = [
         number: "39-23-6423122",
     },
 ]
-
-app.get('/', (request, response) => {
-    response.send('<h1>Phonebook!</h1>')
-});
 
 app.get('/api/persons', (request, response) => {
     response.json(persons);
