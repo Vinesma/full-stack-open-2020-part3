@@ -2,10 +2,19 @@
   "name": "full-stack-open-2020-part3",
   "version": "1.0.0",
   "description": "Exercises from the full-stack-open course",
+  "repository": "https://github.com/Vinesma/full-stack-open-2020-part3",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
   },
   "author": "Vinesma (Otavio Cornelio)",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
 }
