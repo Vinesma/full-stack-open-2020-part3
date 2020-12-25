@@ -44,20 +44,22 @@ const App = () => {
                     number: newNumber,
                 };
 
-                BackendService.update(id, newPerson)
+                BackendService
+                    .update(id, newPerson)
                     .then(newPersonItem => {
                         setPersons(persons.map(person => person.id !== newPerson.id ? person : newPersonItem));
+                        setNewName('');
+                        setNewNumber('');
 
                         setMessage(`${person.name}'s entry has been updated!`);
                         setTimeout(() => {
                             setMessage(null);
                         }, 5000);
                     })
-                    .catch(() => {
+                    .catch(error => {
                         setNewName('');
                         setNewNumber('');
-                        setPersons(persons.filter(person => person.id !== id));
-                        setErrorMessage(`${person.name} has already been deleted!`);
+                        setErrorMessage(error.response.data.error);
                         setTimeout(() => {
                             setErrorMessage(null);
                         }, 6000);
@@ -69,7 +71,8 @@ const App = () => {
                 number: newNumber,
             };
 
-            BackendService.create(newPerson)
+            BackendService
+                .create(newPerson)
                 .then(newPersonResponse => {
                     setPersons(persons.concat(newPersonResponse));
                     setNewName('');
@@ -81,7 +84,11 @@ const App = () => {
                     }, 5000);
                 })
                 .catch(error => {
-                    alert(`[${error}] returned from the server.`);
+                    setErrorMessage(error.response.data.error);
+
+                    setTimeout(() => {
+                        setErrorMessage(null);
+                    }, 6000);
                 });
         }
     };
