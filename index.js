@@ -26,6 +26,7 @@ logger_post = morgan((tokens, request, response) => {
 },{ skip: function(request, response) { return request.method !== 'POST' }});
 
 // middleware
+app.use(express.static('build'));
 app.use(express.json());
 app.use(logger);
 app.use(logger_post);
@@ -44,19 +45,17 @@ app.get('/info', (request, response, next) => {
         .catch(error => next(error));
 });
 
-app.use(express.static('build'));
-
 app.get('/api/persons', (request, response) => {
     Person
         .find({})
-        .then(persons => response.json(persons));
+        .then(persons => response.json(persons.map(person => person.toJSON())));
 });
 
 app.get('/api/persons/:id', (request, response, next) => {
     Person.findById(request.params.id)
         .then(person => {
             if (person) {
-                response.json(person);
+                response.json(person.toJSON());
             } else {
                 response.status(404).end();
             }
@@ -74,8 +73,8 @@ app.post('/api/persons', (request, response, next) => {
 
     person
         .save()
-        .then(savedPerson => savedPerson.toJSON())
-        .then(savedJSONPerson => response.json(savedJSONPerson))
+        .then(person => person.toJSON())
+        .then(person => response.json(person))
         .catch(error => next(error));
 });
 
@@ -87,16 +86,16 @@ app.put('/api/persons/:id', (request, response, next) => {
         number: body.number,
     }
 
-    Person.findOneAndUpdate(request.params.id, person, { new: true })
+    Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true, context: 'query' })
         .then(updatedPerson => {
-            response.json(updatedPerson);
+            response.json(updatedPerson.toJSON());
         })
         .catch(error => next(error));
 });
 
 app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndRemove(request.params.id)
-        .then(result => response.status(204).end())
+        .then(() => response.status(204).end())
         .catch(error => next(error));
 });
 
