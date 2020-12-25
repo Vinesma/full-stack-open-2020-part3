@@ -10,12 +10,12 @@ const Person = require('./models/person');
 
 // morgan config
 // normal logger
-logger = morgan(':method :url STATUS :status - took :response-time ms', {
-    skip: function(request, response) { return request.method === 'POST' }
+const logger = morgan(':method :url STATUS :status - took :response-time ms', {
+    skip: (request, response) =>  { return request.method === 'POST'; }
 });
 
 // POST request logger
-logger_post = morgan((tokens, request, response) => {
+const logger_post = morgan((tokens, request, response) => {
     return [
         tokens.method(request, response),
         tokens.url(request, response),
@@ -23,7 +23,7 @@ logger_post = morgan((tokens, request, response) => {
         'took', tokens['response-time'](request, response), 'ms', '-',
         'body', JSON.stringify(request.body),
     ].join(' ');
-},{ skip: function(request, response) { return request.method !== 'POST' }});
+},{ skip: (request, response) => { return request.method !== 'POST'; } });
 
 // middleware
 app.use(express.static('build'));
@@ -84,7 +84,7 @@ app.put('/api/persons/:id', (request, response, next) => {
     const person = {
         name: body.name,
         number: body.number,
-    }
+    };
 
     Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true, context: 'query' })
         .then(updatedPerson => {
